@@ -1,0 +1,630 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+      <head>
+          <link rel="stylesheet" href="{% static 'orders/style.css' %}"/>
+          <title>Menu</title>
+
+          <script>
+            //When document is loaded
+            document.addEventListener('DOMContentLoaded', () => 
+            {
+                var currentCart = [];
+                var totalPrice = 0.00;
+
+                getCart();
+                getTotal();
+
+                function getCart()
+                {
+                    var request = new XMLHttpRequest();
+                    request.open('GET', `/getCart`);
+                    request.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                    request.onload = () =>
+                    {
+                        currentCart = JSON.parse(request.responseText);
+
+                        //empty out cartList
+                        document.querySelector("#cartList").innerHTML = "";
+                                
+                        //Load up the cart and add items to list
+                        for(var i = 0; i < currentCart.length; ++i)
+                        {
+                            const li = document.createElement('li');
+                            li.innerHTML = currentCart[i];
+                            document.querySelector('#cartList').append(li)
+                        }
+                    }
+                    request.send();
+                }
+
+                function getTotal()
+                {
+                    var request = new XMLHttpRequest();
+                    request.open('GET', `/getTotal`);
+                    request.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                    request.onload = () =>
+                    {
+                        totalPrice = JSON.parse(request.responseText);
+
+                        document.querySelector("#total").innerHTML = "Total: $" + totalPrice;
+                    }
+                    request.send();
+                }
+
+                //set toppings to be defaulted to Pepperoni
+                var topping1 = "Pepperoni";
+                var topping2 = "Pepperoni";
+                var topping3 = "Pepperoni";
+                var topping4 = "Pepperoni";
+                var topping5 = "Pepperoni";
+
+                //get all the topping1 drop downs
+                document.querySelectorAll(".topping1").forEach(select =>
+                {
+                    //when the drop down changes set topping to the respected choice
+                    select.onchange = () =>
+                    {
+                        topping1 = select.value;
+                    };
+                });
+
+                document.querySelectorAll(".topping2").forEach(select =>
+                {
+                    select.onchange = () =>
+                    {
+                        topping2 = select.value;
+                    };
+                });
+
+                document.querySelectorAll(".topping3").forEach(select =>
+                {
+                    select.onchange = () =>
+                    {
+                        topping3 = select.value;
+                    };
+                });
+
+                document.querySelectorAll(".topping4").forEach(select =>
+                {
+                    select.onchange = () =>
+                    {
+                        topping4 = select.value;
+                    };
+                });
+
+                document.querySelectorAll(".topping5").forEach(select =>
+                {
+                    select.onchange = () =>
+                    {
+                        topping5 = select.value;
+                    };
+                });
+            
+              //get all the addToCartButtons
+              document.querySelectorAll(".addToCartButton").forEach(button => 
+              {
+                  //Whenever each button is clicked
+                  button.onclick = () =>
+                  {
+                    var originalPrice = button.dataset.price;
+
+                    //Create new li item for shopping cart
+                    const li = document.createElement('li');
+
+                    //Change li to be selected food's info
+                    if(button.dataset.type == "Regular Pizza" || button.dataset.type == "Sicilian Pizza")
+                    {
+                        //If the user chooses this pizza they will get it for free since it is my favorite :)
+                        if(button.dataset.size == "Small" && button.dataset.flavor == "2 Toppings" && topping1 == "Mushrooms" && topping2 == "Black Olives")
+                        {
+                            button.dataset.topping1 = topping1;
+                            button.dataset.topping2 = topping2;
+                            li.innerHTML = button.dataset.size + " " + button.dataset.flavor + " " + button.dataset.type + " with " + button.dataset.topping1 + " and " + button.dataset.topping2 + " for FREE since you picked my favorite pizza :)";
+                            button.dataset.price = 0.00;
+                        }
+
+                        else if(button.dataset.flavor == "Cheese")
+                        {
+                            li.innerHTML = button.dataset.size + " " + button.dataset.flavor + " " + button.dataset.type + " for $" + button.dataset.price;
+                        }
+
+                        else if(button.dataset.flavor == "1 Topping")
+                        {
+                            button.dataset.topping1 = topping1;
+                            li.innerHTML = button.dataset.size + " " + button.dataset.flavor + " " + button.dataset.type + " with " + button.dataset.topping1 + " for $" + button.dataset.price;
+                        }   
+
+                        else if(button.dataset.flavor == "2 Toppings")
+                        {
+                            button.dataset.topping1 = topping1;
+                            button.dataset.topping2 = topping2;
+                            li.innerHTML = button.dataset.size + " " + button.dataset.flavor + " " + button.dataset.type + " with " + button.dataset.topping1 + " and " + button.dataset.topping2 + " for $" + button.dataset.price;
+                        }
+
+                        else if(button.dataset.flavor == "3 Toppings")
+                        {
+                            button.dataset.topping1 = topping1;
+                            button.dataset.topping2 = topping2;
+                            button.dataset.topping3 = topping3;
+                            li.innerHTML = button.dataset.size + " " + button.dataset.flavor + " " + button.dataset.type + " with " + button.dataset.topping1 + ", " + button.dataset.topping2 + ", and " + button.dataset.topping3 + " for $" + button.dataset.price;
+                        }
+
+                        else if(button.dataset.flavor == "4 Toppings")
+                        {
+                            button.dataset.topping1 = topping1;
+                            button.dataset.topping2 = topping2;
+                            button.dataset.topping3 = topping3;
+                            button.dataset.topping4 = topping4;
+                            li.innerHTML = button.dataset.size + " " + button.dataset.flavor + " " + button.dataset.type + " with " + button.dataset.topping1 + ", " + button.dataset.topping2 + ", " + button.dataset.topping3 + ", and " + button.dataset.topping4 + " for $" + button.dataset.price;
+                        }
+
+                        else if(button.dataset.flavor == "5 Toppings")
+                        {
+                            button.dataset.topping1 = topping1;
+                            button.dataset.topping2 = topping2;
+                            button.dataset.topping3 = topping3;
+                            button.dataset.topping4 = topping4;
+                            button.dataset.topping5 = topping5;
+                            li.innerHTML = button.dataset.size + " " + button.dataset.flavor + " " + button.dataset.type + " with " + button.dataset.topping1 + ", " + button.dataset.topping2 + ", " + button.dataset.topping3 + ", " + button.dataset.topping4 + ", and " + button.dataset.topping5 + " for $" + button.dataset.price;
+                        }
+                    }
+
+                    else if(button.dataset.type == "Sub")
+                    {
+                        if(button.dataset.flavor == "Sausage, Peppers, & Onions" || button.dataset.flavor == "Hamburger" || button.dataset.flavor == "Cheeseburger" || button.dataset.flavor == "Fried Chicken" || button.dataset.flavor == "Veggie")
+                        {
+                            button.dataset.topping2 = topping2;
+                            if(topping2 == "Extra Cheese (+ 0.50)")
+                                button.dataset.price = parseFloat(button.dataset.price) + 0.50;
+
+                            li.innerHTML = button.dataset.size + " " + button.dataset.flavor + " " + button.dataset.type + " with " + button.dataset.topping2 + " for $" + button.dataset.price;
+                        }
+
+                        else
+                        {
+                            button.dataset.topping1 = topping1;
+                            if(topping1 == "Mushrooms (+ 0.50)" || topping1 == "Green Peppers (+ 0.50)" || topping1 == "Onions (+ 0.50)")
+                                button.dataset.price = parseFloat(button.dataset.price) + 0.50; 
+
+                            else if(topping1 == "Mushrooms and Green Peppers (+ 1.00)" || topping1 == "Mushrooms and Onions (+ 1.00)" || topping1 == "Green Peppers and Onions (+ 1.00)")
+                                button.dataset.price = parseFloat(button.dataset.price) + 1.00;
+
+                            else if(topping1 == "Mushrooms, Green Peppers, and Onions (+ 1.50)")
+                                button.dataset.price = parseFloat(button.dataset.price) + 1.50;
+
+                            button.dataset.topping2 = topping2;
+                            if(topping2 == "Extra Cheese (+ 0.50)")
+                                button.dataset.price = parseFloat(button.dataset.price) + 0.50;
+
+                            li.innerHTML = button.dataset.size + " " + button.dataset.flavor + " " + button.dataset.type + " with " + button.dataset.topping1 + " and " + button.dataset.topping2 + " for $" + button.dataset.price;
+                        }
+                    }
+
+                    else
+                    {
+                        li.innerHTML = button.dataset.size + " " + button.dataset.flavor + " " + button.dataset.type + " for $" + button.dataset.price;
+                    }
+
+                    //Add li to virtual shopping cart
+                    document.querySelector('#cartList').append(li);
+
+                    //Add item to listOfCartItems
+                    currentCart.push(li.innerHTML);
+
+                    //Add item's price to totalPrice
+                    totalPrice += parseFloat(button.dataset.price);
+
+                    //Update totalPrice on Django end and update total on page
+                    var request = new XMLHttpRequest();
+                    request.open('POST', `/updateTotal`);
+                    request.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                    request.onload = () =>
+                    {
+                        document.querySelector("#total").innerHTML = "Total: $" + totalPrice;
+                    }
+                    var data1 = new FormData();
+                    data1.append('totalPrice', totalPrice)
+                    request.send(data1);
+
+                    //Reset button to store original price before added toppings
+                    button.dataset.price = originalPrice;
+
+                    //Add to Cart List on Django end and update cart on page
+                    var request = new XMLHttpRequest();
+                    request.open('POST', `/addToCart`);
+                    request.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                    request.onload = () =>
+                    {
+                        //Create local currentCart variable and make it equal to listOfCartItems passed in by Django Context
+                        //ignore errors, its correct
+                        currentCart = JSON.parse(request.responseText);
+                        alert("Added Item To Cart!");
+
+                        //empty out cartList
+                        document.querySelector("#cartList").innerHTML = "";
+                                
+                        //Load up the cart and add items to list
+                        for(var i = 0; i < currentCart.length; ++i)
+                        {
+                            const li = document.createElement('li');
+                            li.innerHTML = currentCart[i];
+                            document.querySelector('#cartList').append(li)
+                        }
+                    }
+                    var data2 = new FormData();
+                    currentCart = JSON.stringify(currentCart);
+                    data2.append('currentCart', currentCart)
+                    request.send(data2);
+                  };
+              });
+
+              document.querySelector("#checkOutButton").onclick = () =>
+              {
+                var request = new XMLHttpRequest();
+                request.open('POST', `/checkout`);
+                request.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                request.onload = () =>
+                {
+                    alert("Please confirm your order and total charge of $" + totalPrice + " by clicking ok");  
+                    alert("Congrats! Your order has been placed Successfully!");
+                    //empty out cartList
+                    document.querySelector("#cartList").innerHTML = "Your order is waiting to be approved! Please have your cash or credit ready!";
+                }
+                request.send();
+              };
+            });
+          </script>
+
+      </head>
+      <body>
+          <h1>Welcome {{ user }}!</h1>
+          <a href="{% url 'logout' %}">Logout</a>
+
+          <hr>
+
+          <h2>Cart</h2>
+          <ol id="cartList">
+            
+          </ol>
+
+          <h3 id="total">Total: $0.00</h3>
+          <button id="checkOutButton">Checkout</button>          
+
+          <hr>
+
+          <h2>Regular Pizza</h2>
+
+          <ul>
+            {% for option in options %}
+                {% if option.typeOfFood == "Regular Pizza" %}
+                <li>
+                    <b class="selectedFoodInfo">{{ option.size }}  {{ option.flavor }} Pizza for ${{ option.price }}</b>
+                    {% if option.flavor == "1 Topping" or option.flavor == "2 Toppings" or option.flavor == "3 Toppings" or option.flavor == "Special"%}
+                    <select name="topping1" class="topping1">
+                        <option value="Pepperoni">Pepperoni</option>
+                        <option value="Sausage">Sausage</option>
+                        <option value="Mushrooms">Mushrooms</option>
+                        <option value="Onions">Onions</option>
+                        <option value="Ham">Ham</option>
+                        <option value="Canadian Bacon">Canadian Bacon</option>
+                        <option value="Pineapple">Pineapple</option>
+                        <option value="Eggplant">Eggplant</option>
+                        <option value="Tomato and Basil">Tomato and Basil</option>
+                        <option value="Green Peppers">Green Peppers</option>
+                        <option value="Hamburger">Hamburger</option>
+                        <option value="Spinach">Spinach</option>
+                        <option value="Artichoke">Artichoke</option>
+                        <option value="Barbecue Chicken">Barbecue Chicken</option>
+                        <option value="Anchovies">Anchovies</option>
+                        <option value="Black Olives">Black Olives</option>
+                        <option value="Fresh Garlic">Fresh Garlic</option>
+                        <option value="Zucchini">Zucchini</option>
+                    </select>
+                    {% endif %}
+
+                    {% if option.flavor == "2 Toppings" or option.flavor == "3 Toppings" or option.flavor == "Special"%}
+                    <select name="topping2" class="topping2">
+                        <option value="Pepperoni">Pepperoni</option>
+                        <option value="Sausage">Sausage</option>
+                        <option value="Mushrooms">Mushrooms</option>
+                        <option value="Onions">Onions</option>
+                        <option value="Ham">Ham</option>
+                        <option value="Canadian Bacon">Canadian Bacon</option>
+                        <option value="Pineapple">Pineapple</option>
+                        <option value="Eggplant">Eggplant</option>
+                        <option value="Tomato and Basil">Tomato and Basil</option>
+                        <option value="Green Peppers">Green Peppers</option>
+                        <option value="Hamburger">Hamburger</option>
+                        <option value="Spinach">Spinach</option>
+                        <option value="Artichoke">Artichoke</option>
+                        <option value="Barbecue Chicken">Barbecue Chicken</option>
+                        <option value="Anchovies">Anchovies</option>
+                        <option value="Black Olives">Black Olives</option>
+                        <option value="Fresh Garlic">Fresh Garlic</option>
+                        <option value="Zucchini">Zucchini</option>
+                    </select>
+                    {% endif %}
+
+                    {% if option.flavor == "3 Toppings" or option.flavor == "Special"%}
+                    <select name="topping3" class="topping3">
+                        <option value="Pepperoni">Pepperoni</option>
+                        <option value="Sausage">Sausage</option>
+                        <option value="Mushrooms">Mushrooms</option>
+                        <option value="Onions">Onions</option>
+                        <option value="Ham">Ham</option>
+                        <option value="Canadian Bacon">Canadian Bacon</option>
+                        <option value="Pineapple">Pineapple</option>
+                        <option value="Eggplant">Eggplant</option>
+                        <option value="Tomato and Basil">Tomato and Basil</option>
+                        <option value="Green Peppers">Green Peppers</option>
+                        <option value="Hamburger">Hamburger</option>
+                        <option value="Spinach">Spinach</option>
+                        <option value="Artichoke">Artichoke</option>
+                        <option value="Barbecue Chicken">Barbecue Chicken</option>
+                        <option value="Anchovies">Anchovies</option>
+                        <option value="Black Olives">Black Olives</option>
+                        <option value="Fresh Garlic">Fresh Garlic</option>
+                        <option value="Zucchini">Zucchini</option>
+                    </select>
+                    {% endif %}
+
+                    {% if option.flavor == "Special" %}
+                    <select name="topping4" class="topping4">
+                        <option value="Pepperoni">Pepperoni</option>
+                        <option value="Sausage">Sausage</option>
+                        <option value="Mushrooms">Mushrooms</option>
+                        <option value="Onions">Onions</option>
+                        <option value="Ham">Ham</option>
+                        <option value="Canadian Bacon">Canadian Bacon</option>
+                        <option value="Pineapple">Pineapple</option>
+                        <option value="Eggplant">Eggplant</option>
+                        <option value="Tomato and Basil">Tomato and Basil</option>
+                        <option value="Green Peppers">Green Peppers</option>
+                        <option value="Hamburger">Hamburger</option>
+                        <option value="Spinach">Spinach</option>
+                        <option value="Artichoke">Artichoke</option>
+                        <option value="Barbecue Chicken">Barbecue Chicken</option>
+                        <option value="Anchovies">Anchovies</option>
+                        <option value="Black Olives">Black Olives</option>
+                        <option value="Fresh Garlic">Fresh Garlic</option>
+                        <option value="Zucchini">Zucchini</option>
+                    </select>
+
+                    <select name="topping5" class="topping5">
+                        <option value="Pepperoni">Pepperoni</option>
+                        <option value="Sausage">Sausage</option>
+                        <option value="Mushrooms">Mushrooms</option>
+                        <option value="Onions">Onions</option>
+                        <option value="Ham">Ham</option>
+                        <option value="Canadian Bacon">Canadian Bacon</option>
+                        <option value="Pineapple">Pineapple</option>
+                        <option value="Eggplant">Eggplant</option>
+                        <option value="Tomato and Basil">Tomato and Basil</option>
+                        <option value="Green Peppers">Green Peppers</option>
+                        <option value="Hamburger">Hamburger</option>
+                        <option value="Spinach">Spinach</option>
+                        <option value="Artichoke">Artichoke</option>
+                        <option value="Barbecue Chicken">Barbecue Chicken</option>
+                        <option value="Anchovies">Anchovies</option>
+                        <option value="Black Olives">Black Olives</option>
+                        <option value="Fresh Garlic">Fresh Garlic</option>
+                        <option value="Zucchini">Zucchini</option>
+                    </select>
+                    {% endif %}
+
+                    <button class="addToCartButton" data-type="{{ option.typeOfFood }}" data-size="{{ option.size }}" data-flavor="{{ option.flavor }}" data-price="{{ option.price }}">Add To Cart</button>
+                </li>
+                {% endif %}
+           {% endfor %} 
+          </ul>
+          
+          <hr>
+
+
+           <h2>Sicilian Pizza</h2>
+           <ul>
+             {% for option in options %}
+                 {% if option.typeOfFood == "Sicilian Pizza" %}
+                 <li>
+                    <b class="selectedFoodInfo">{{ option.size }}  {{ option.flavor }} Pizza for ${{ option.price }}</b>
+                    {% if option.flavor == "1 Topping" or option.flavor == "2 Toppings" or option.flavor == "3 Toppings" or option.flavor == "Special" %}
+                    <select name="topping1" class="topping1">
+                        <option value="Pepperoni">Pepperoni</option>
+                        <option value="Sausage">Sausage</option>
+                        <option value="Mushrooms">Mushrooms</option>
+                        <option value="Onions">Onions</option>
+                        <option value="Ham">Ham</option>
+                        <option value="Canadian Bacon">Canadian Bacon</option>
+                        <option value="Pineapple">Pineapple</option>
+                        <option value="Eggplant">Eggplant</option>
+                        <option value="Tomato and Basil">Tomato and Basil</option>
+                        <option value="Green Peppers">Green Peppers</option>
+                        <option value="Hamburger">Hamburger</option>
+                        <option value="Spinach">Spinach</option>
+                        <option value="Artichoke">Artichoke</option>
+                        <option value="Barbecue Chicken">Barbecue Chicken</option>
+                        <option value="Anchovies">Anchovies</option>
+                        <option value="Black Olives">Black Olives</option> 
+                        <option value="Fresh Garlic">Fresh Garlic</option>
+                        <option value="Zucchini">Zucchini</option>
+                    </select>
+                    {% endif %}
+
+                    {% if option.flavor == "2 Toppings" or option.flavor == "3 Toppings" or option.flavor == "Special" %}
+                    <select name="topping2" class="topping2">
+                        <option value="Pepperoni">Pepperoni</option>
+                        <option value="Sausage">Sausage</option>
+                        <option value="Mushrooms">Mushrooms</option>
+                        <option value="Onions">Onions</option>
+                        <option value="Ham">Ham</option>
+                        <option value="Canadian Bacon">Canadian Bacon</option>
+                        <option value="Pineapple">Pineapple</option>
+                        <option value="Eggplant">Eggplant</option>
+                        <option value="Tomato and Basil">Tomato and Basil</option>
+                        <option value="Green Peppers">Green Peppers</option>
+                        <option value="Hamburger">Hamburger</option>
+                        <option value="Spinach">Spinach</option>
+                        <option value="Artichoke">Artichoke</option>
+                        <option value="Barbecue Chicken">Barbecue Chicken</option>
+                        <option value="Anchovies">Anchovies</option>
+                        <option value="Black Olives">Black Olives</option>
+                        <option value="Fresh Garlic">Fresh Garlic</option>
+                        <option value="Zucchini">Zucchini</option>
+                    </select>
+                    {% endif %}
+
+                    {% if option.flavor == "3 Toppings" or option.flavor == "Special" %}
+                    <select name="topping3" class="topping3">
+                        <option value="Pepperoni">Pepperoni</option>
+                        <option value="Sausage">Sausage</option>
+                        <option value="Mushrooms">Mushrooms</option>
+                        <option value="Onions">Onions</option>
+                        <option value="Ham">Ham</option>
+                        <option value="Canadian Bacon">Canadian Bacon</option>
+                        <option value="Pineapple">Pineapple</option>
+                        <option value="Eggplant">Eggplant</option>
+                        <option value="Tomato and Basil">Tomato and Basil</option>
+                        <option value="Green Peppers">Green Peppers</option>
+                        <option value="Hamburger">Hamburger</option>
+                        <option value="Spinach">Spinach</option>
+                        <option value="Artichoke">Artichoke</option>
+                        <option value="Barbecue Chicken">Barbecue Chicken</option>
+                        <option value="Anchovies">Anchovies</option>
+                        <option value="Black Olives">Black Olives</option>
+                        <option value="Fresh Garlic">Fresh Garlic</option>
+                        <option value="Zucchini">Zucchini</option>
+                    </select>
+                    {% endif %}
+
+                    {% if option.flavor == "Special" %}
+                    <select name="topping4" class="topping4">
+                        <option value="Pepperoni">Pepperoni</option>
+                        <option value="Sausage">Sausage</option>
+                        <option value="Mushrooms">Mushrooms</option>
+                        <option value="Onions">Onions</option>
+                        <option value="Ham">Ham</option>
+                        <option value="Canadian Bacon">Canadian Bacon</option>
+                        <option value="Pineapple">Pineapple</option>
+                        <option value="Eggplant">Eggplant</option>
+                        <option value="Tomato and Basil">Tomato and Basil</option>
+                        <option value="Green Peppers">Green Peppers</option>
+                        <option value="Hamburger">Hamburger</option>
+                        <option value="Spinach">Spinach</option>
+                        <option value="Artichoke">Artichoke</option>
+                        <option value="Barbecue Chicken">Barbecue Chicken</option>
+                        <option value="Anchovies">Anchovies</option>
+                        <option value="Black Olives">Black Olives</option>
+                        <option value="Fresh Garlic">Fresh Garlic</option>
+                        <option value="Zucchini">Zucchini</option>
+                    </select>
+
+                    <select name="topping5" class="topping5">
+                        <option value="Pepperoni">Pepperoni</option>
+                        <option value="Sausage">Sausage</option>
+                        <option value="Mushrooms">Mushrooms</option>
+                        <option value="Onions">Onions</option>
+                        <option value="Ham">Ham</option>
+                        <option value="Canadian Bacon">Canadian Bacon</option>
+                        <option value="Pineapple">Pineapple</option>
+                        <option value="Eggplant">Eggplant</option>
+                        <option value="Tomato and Basil">Tomato and Basil</option>
+                        <option value="Green Peppers">Green Peppers</option>
+                        <option value="Hamburger">Hamburger</option>
+                        <option value="Spinach">Spinach</option>
+                        <option value="Artichoke">Artichoke</option>
+                        <option value="Barbecue Chicken">Barbecue Chicken</option>
+                        <option value="Anchovies">Anchovies</option>
+                        <option value="Black Olives">Black Olives</option>
+                        <option value="Fresh Garlic">Fresh Garlic</option>
+                        <option value="Zucchini">Zucchini</option>
+                    </select>
+                    {% endif %}
+
+                    <button class="addToCartButton" data-type="{{ option.typeOfFood }}" data-size="{{ option.size }}" data-flavor="{{ option.flavor }}" data-price="{{ option.price }}">Add To Cart</button>
+                 </li>
+                 {% endif %}
+            {% endfor %}
+            </ul>
+
+            <hr>
+
+            <h2>Subs</h2>
+            <ul>
+                {% for option in options %}
+                    {% if option.typeOfFood == "Sub" %}
+                    <li>
+                        <b class="selectedFoodInfo">{{ option.size }}  {{ option.flavor }} Sub for ${{ option.price }}</b>
+                        {% if option.flavor == "Cheese" or option.flavor == "Italian" or option.flavor == "Ham + Cheese" or option.flavor == "Meatball" or option.flavor == "Tuna" or option.flavor == "Turkey" or option.flavor == "Chicken Parmigiana" or option.flavor == "Eggplant Parmigiana" or option.flavor == "Steak" or option.flavor == "Steak + Cheese"%}
+                        <select name="topping1" class="topping1">
+                            <option value="No Extra Toppings">No Extra Toppings</option>
+                            <option value="Mushrooms (+ 0.50)">Add Mushrooms</option>
+                            <option value="Green Peppers (+ 0.50)">Add Green Peppers</option>
+                            <option value="Onions (+ 0.50)">Add Onions</option>
+                            <option value="Mushrooms and Green Peppers (+ 1.00)">Add Mushrooms and Green Peppers</option>
+                            <option value="Mushrooms and Onions (+ 1.00)">Add Mushrooms and Onions</option>
+                            <option value="Green Peppers and Onions (+ 1.00)">Add Green Peppers and Onions</option>
+                            <option value="Mushrooms, Green Peppers, and Onions (+ 1.50)">Add Mushrooms, Green Peppers, and Onions</option>
+                        </select>
+                        {% endif %}
+
+                        <select name="topping2" class="topping2">
+                            <option value="No Extra Cheese">No Extra Cheese</option>
+                            <option value="Extra Cheese (+ 0.50)">Extra Cheese</option>
+                        </select>  
+                        
+                        <button class="addToCartButton" data-type="{{ option.typeOfFood }}" data-size="{{ option.size }}" data-flavor="{{ option.flavor }}" data-price="{{ option.price }}">Add To Cart</button>
+                    </li>
+                    {% endif %}
+            {% endfor %}
+            </ul>
+
+            <hr>
+
+
+            <h2>Pasta</h2>
+            <ul>
+                {% for option in options %}
+                    {% if option.typeOfFood == "Pasta" %}
+                    <li>
+                        <b class="selectedFoodInfo">{{ option.size }}  {{ option.flavor }} Pizza for ${{ option.price }}</b>
+                        <button class="addToCartButton" data-type="{{ option.typeOfFood }}" data-size="{{ option.size }}" data-flavor="{{ option.flavor }}" data-price="{{ option.price }}">Add To Cart</button>
+                    </li>
+                    {% endif %}
+            {% endfor %}
+            </ul>
+
+            <hr>
+
+
+            <h2>Salads</h2>
+            <ul>
+                {% for option in options %}
+                    {% if option.typeOfFood == "Salad" %}
+                    <li>
+                        <b class="selectedFoodInfo">{{ option.size }}  {{ option.flavor }} Salad for ${{ option.price }}</b>
+                        <button class="addToCartButton" data-type="{{ option.typeOfFood }}" data-size="{{ option.size }}" data-flavor="{{ option.flavor }}" data-price="{{ option.price }}">Add To Cart</button>
+                    </li>
+                    {% endif %}
+            {% endfor %}
+            </ul>
+
+            <hr>
+
+
+            <h2>Dinner Platters</h2>
+            <ul>
+                {% for option in options %}
+                    {% if option.typeOfFood == "Dinner Platter" %}
+                    <li>
+                        <b class="selectedFoodInfo">{{ option.size }}  {{ option.flavor }} Dinner Platter for ${{ option.price }}</b>
+                        <button class="addToCartButton" data-type="{{ option.typeOfFood }}" data-size="{{ option.size }}" data-flavor="{{ option.flavor }}" data-price="{{ option.price }}">Add To Cart</button>
+                    </li>
+                    {% endif %}
+            {% endfor %}
+            </ul>            
+
+            <hr>         
+      </body>
+  </html>

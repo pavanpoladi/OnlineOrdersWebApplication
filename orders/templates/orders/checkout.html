@@ -1,0 +1,74 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{% static 'orders/style.css' %}"/>
+        <title>Checkout</title>
+
+        <style>
+            table 
+            {
+            border-collapse: collapse;
+            width: 100%;
+            }
+    
+            th, td 
+            {
+            text-align: left;
+            padding: 8px;
+            }
+    
+            tr:nth-child(even)
+            {
+            background-color: #f2f2f2
+            }
+    
+            th 
+            {
+            background-color: blue;
+            color: white;
+            }
+        </style>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => 
+            {
+                document.querySelector("#processOrder").onclick = () =>
+                {
+                    //Update totalPrice on Django end and update total on page
+                    var request = new XMLHttpRequest();
+                    request.open('POST', `/emptyCartAndTotalPrice`);
+                    request.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                    request.onload = () =>
+                    {
+                        alert("Order Processed The customer will now see that their order is complete!")
+                    }
+                    request.send();
+                };
+            });
+        </script>
+    </head>
+
+    <body>
+        <h1>Orders</h1>
+        <a href="{% url 'logout' %}">Logout</a>
+
+        <table>
+            <tr>
+                <th>Number</th>
+                <th>Item</th>
+            </tr>
+
+            {% for item in cart %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ item }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <h2>Total: ${{ totalPrice }}</h2>
+        <button id="processOrder">Process Order</button> 
+    </body>
+</html>
