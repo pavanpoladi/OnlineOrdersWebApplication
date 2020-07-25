@@ -1,0 +1,15 @@
+# Project 3
+
+In this project I Implemented Javascript, Django,  an SQL Database, Python, Ajax, HTML, CSS, and Bootstrap to create a web application for handling a pizza restaurant's online orders. Users will be able to browse the restaurant’s menu, add items to their cart, and submit their orders. Meanwhile, the restaurant owners will be able to add and update menu items, and view orders that have been placed.
+
+When a user is logged in they are taken to a page where they can see their virtual shopping cart and a menu from Pinnochio's Pizza & Subs (a popular pizza place in Cambridge).
+
+If the user is logged in as an admin, they will be able to go to the /admin route and enter the Django Admin interface where they can register or unregister users and add, update, and remove items on the menu. If they go back to the menu, they will see that the menu will change accordingly if they added .
+
+It is important to note that a user can log in and be registered with a username, password, first name,last name, and email address. Users can log in and out of the website at any time they choose to do so.
+
+If the user is logged in as a regular customer, they can add items to their virtual shopping cart, displayed at the top of their webpage. Their cart will remain saved even if the user logs out and logs back in or refreshes the page. I also added a personal touch here where if the user adds any 2 topping pizza with mushrooms and black olives, they will get the pizza for free because it is my favorite pizza!
+
+Once there is atleast one item in the user's shopping cart, they can place an orderwhereby the user is asked to confirm the items in the shopping cart, and the total before placing an order.
+
+Now that a user has placed an order, an site administrator or admin can log in and see a page where they can view any orders that have been placed. I also added another personal touch here where the admin can accept or process the order, and when the customer logs back in they will be notified that their order has been accepted and that their food will be ready to be picked up within approximately 15 minutes. 
